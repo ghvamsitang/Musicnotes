@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Note Hero | Master Music Notation</title>
+    <meta name="description" content="A premium music note identification quiz to help you master reading music notation.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <header>
+            <div class="logo">
+                <span class="logo-icon">🎵</span>
+                <h1>Note Hero</h1>
+            </div>
+            <div class="header-right">
+                <div class="user-selector">
+                    <button class="user-btn active" data-user="V">V</button>
+                    <button class="user-btn" data-user="I">I</button>
+                    <button class="user-btn" data-user="J">J</button>
+                </div>
+            </div>
+        </header>
+
+        <main class="game-layout">
+            <!-- Left side: Quiz Card -->
+            <div class="quiz-card">
+                <!-- Start Screen Overlay -->
+                <div id="start-screen" class="overlay">
+                    <h2>Ready to Play?</h2>
+                    <p class="overlay-desc">Train your sight-reading skills. Select your clef and difficulty, then start the challenge.</p>
+                    <button id="start-btn" class="primary-btn">Start Game</button>
+                </div>
+
+                <!-- Game Over Overlay -->
+                <div id="game-over-screen" class="overlay hidden">
+                    <h2>Game Over!</h2>
+                    <div class="game-over-stats">
+                        <div class="go-stat">
+                            <span class="go-label">Final Score</span>
+                            <span id="go-score" class="go-value">0</span>
+                        </div>
+                        <div class="go-stat">
+                            <span class="go-label">Accuracy</span>
+                            <span id="go-accuracy" class="go-value">0%</span>
+                        </div>
+                    </div>
+                    <button id="restart-btn" class="primary-btn">Play Again</button>
+                </div>
+
+                <!-- Timer Bar (Time Attack Mode) -->
+                <div class="timer-bar-container" id="timer-bar-container">
+                    <div id="timer-bar" class="timer-bar"></div>
+                </div>
+
+                <!-- Game Stats Bar -->
+                <div class="game-stats-bar">
+                    <div class="score-item">
+                        <span class="label">Score</span>
+                        <span id="score" class="value">0</span>
+                    </div>
+                    <div class="score-item" id="streak-container">
+                        <span class="label">Streak</span>
+                        <span id="streak" class="value">0</span>
+                    </div>
+                    <div class="score-item hidden" id="timer-text-container">
+                        <span class="label">Time</span>
+                        <span id="timer-text" class="value">60s</span>
+                    </div>
+                </div>
+
+                <div id="staff-container">
+                    <!-- VexFlow will render here -->
+                    <div id="loading-indicator" class="loading-indicator">Loading music engine...</div>
+                </div>
+                
+                <div class="feedback-container">
+                    <div id="feedback" class="feedback-text">Get ready!</div>
+                </div>
+
+                <div class="controls">
+                    <div class="note-buttons">
+                        <button class="note-btn" data-note="C">C</button>
+                        <button class="note-btn" data-note="D">D</button>
+                        <button class="note-btn" data-note="E">E</button>
+                        <button class="note-btn" data-note="F">F</button>
+                        <button class="note-btn" data-note="G">G</button>
+                        <button class="note-btn" data-note="A">A</button>
+                        <button class="note-btn" data-note="B">B</button>
+                    </div>
+                    <div class="keyboard-help">
+                        <span>Press keys <strong>A - G</strong> on keyboard to play</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right side / Bottom: Settings & Stats Dashboards -->
+            <div class="dashboard-panel">
+                <!-- Settings Panel -->
+                <div class="panel-section">
+                    <h3>Game Settings</h3>
+                    <div class="settings-grid">
+                        <div class="setting-item">
+                            <span class="setting-label">Clef</span>
+                            <div class="segmented-control" id="clef-selector">
+                                <button class="seg-btn active" data-val="treble">Treble</button>
+                                <button class="seg-btn" data-val="bass">Bass</button>
+                                <button class="seg-btn" data-val="mixed">Mixed</button>
+                            </div>
+                        </div>
+                        <div class="setting-item">
+                            <span class="setting-label">Difficulty</span>
+                            <div class="segmented-control" id="difficulty-selector">
+                                <button class="seg-btn active" data-val="easy">Easy</button>
+                                <button class="seg-btn" data-val="medium">Medium</button>
+                                <button class="seg-btn" data-val="hard">Hard</button>
+                            </div>
+                        </div>
+                        <div class="setting-item">
+                            <span class="setting-label">Game Mode</span>
+                            <div class="segmented-control" id="mode-selector">
+                                <button class="seg-btn active" data-val="practice">Practice</button>
+                                <button class="seg-btn" data-val="timeattack">Time Attack</button>
+                            </div>
+                        </div>
+                        <div class="setting-item hidden" id="time-limit-setting">
+                            <span class="setting-label">Time Limit</span>
+                            <div class="segmented-control" id="duration-selector">
+                                <button class="seg-btn" data-val="30">30s</button>
+                                <button class="seg-btn active" data-val="60">60s</button>
+                                <button class="seg-btn" data-val="90">90s</button>
+                            </div>
+                        </div>
+                        <div class="setting-item flex-row">
+                            <span class="setting-label">Audio Synth</span>
+                            <button id="audio-toggle" class="toggle-btn active">
+                                <span class="audio-icon">🔊</span> Sound On
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats Panel -->
+                <div class="panel-section">
+                    <h3>User Statistics</h3>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <span class="stat-label">High Score</span>
+                            <span id="stat-highscore" class="stat-value">0</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-label">Accuracy</span>
+                            <span id="stat-accuracy" class="stat-value">0%</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-label">Total Answers</span>
+                            <span id="stat-total" class="stat-value">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reference Guide Panel -->
+                <div class="panel-section collapse-container">
+                    <div class="panel-header-toggle" id="guide-toggle-btn">
+                        <h3>Sight-Reading Guide</h3>
+                        <span class="toggle-arrow">▼</span>
+                    </div>
+                    <div class="guide-content hidden" id="guide-content">
+                        <div class="guide-tabs">
+                            <button class="guide-tab-btn active" data-tab="treble-guide">Treble</button>
+                            <button class="guide-tab-btn" data-tab="bass-guide">Bass</button>
+                        </div>
+                        <div class="guide-tab-content active" id="treble-guide">
+                            <div class="guide-grid">
+                                <div class="guide-col">
+                                    <span class="guide-subtitle">Lines (Bottom to Top)</span>
+                                    <div class="guide-notes">
+                                        <div class="guide-note-item"><span class="note-badge">E4</span><span>Line 1</span></div>
+                                        <div class="guide-note-item"><span class="note-badge">G4</span><span>Line 2</span></div>
+                                        <div class="guide-note-item"><span class="note-badge">B4</span><span>Line 3</span></div>
+                                        <div class="guide-note-item"><span class="note-badge">D5</span><span>Line 4</span></div>
+                                        <div class="guide-note-item"><span class="note-badge">F5</span><span>Line 5</span></div>
+                                    </div>
+                                    <p class="guide-mnemonic">Mnemonic: <strong>E</strong>very <strong>G</strong>ood <strong>B</strong>oy <strong>D</strong>oes <strong>F</strong>ine</p>
+                                </div>
+                                <div class="guide-col">
+                                    <span class="guide-subtitle">Spaces (Bottom to Top)</span>
+                                    <div class="guide-notes">
+                                        <div class="guide-note-item"><span class="note-badge">F4</span><span>Space 1</span></div>
+                                        <div class="guide-note-item"><span class="note-badge">A4</span><span>Space 2</span></div>
+                                        <div class="guide-note-item"><span class="note-badge">C5</span><span>Space 3</span></div>
+                                        <div class="guide-note-item"><span class="note-badge">E5</span><span>Space 4</span></div>
+                                    </div>
+                                    <p class="guide-mnemonic">Mnemonic: Spells <strong>F - A - C - E</strong></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="guide-tab-content" id="bass-guide">
+                            <div class="guide-grid">
+                                <div class="guide-col">
+                                    <span class="guide-subtitle">Lines (Bottom to Top)</span>
+                                    <div class="guide-notes">
+                                        <div class="guide-note-item"><span class="note-badge">G2</span><span>Line 1</span></div>
+                                        <div class="guide-note-item"><span class="note-badge">B2</span><span>Line 2</span></div>
+                                        <div class="guide-note-item"><span class="note-badge">D3</span><span>Line 3</span></div>
+                                        <div class="guide-note-item"><span class="note-badge">F3</span><span>Line 4</span></div>
+                                        <div class="guide-note-item"><span class="note-badge">A3</span><span>Line 5</span></div>
+                                    </div>
+                                    <p class="guide-mnemonic">Mnemonic: <strong>G</strong>ood <strong>B</strong>oys <strong>D</strong>o <strong>F</strong>ine <strong>A</strong>lways</p>
+                                </div>
+                                <div class="guide-col">
+                                    <span class="guide-subtitle">Spaces (Bottom to Top)</span>
+                                    <div class="guide-notes">
+                                        <div class="guide-note-item"><span class="note-badge">A2</span><span>Space 1</span></div>
+                                        <div class="guide-note-item"><span class="note-badge">C3</span><span>Space 2</span></div>
+                                        <div class="guide-note-item"><span class="note-badge">E3</span><span>Space 3</span></div>
+                                        <div class="guide-note-item"><span class="note-badge">G3</span><span>Space 4</span></div>
+                                    </div>
+                                    <p class="guide-mnemonic">Mnemonic: <strong>A</strong>ll <strong>C</strong>ows <strong>E</strong>at <strong>G</strong>rass</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel-actions">
+                    <button id="reset-game" class="secondary-btn danger">Reset Stats</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- VexFlow Library -->
+    <script src="https://cdn.jsdelivr.net/npm/vexflow@4.2.2/build/cjs/vexflow.js"></script>
+    <script src="app.js" type="module"></script>
+</body>
+</html>
