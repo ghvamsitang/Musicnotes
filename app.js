@@ -277,7 +277,7 @@ const NOTE_RANGES = {
             { name: 'G', octave: 4 }
         ],
         guitar: [
-            { name: 'D', octave: 2 }, { name: 'D#', octave: 2 }, { name: 'E', octave: 2 },
+            { name: 'E', octave: 2 },
             { name: 'F', octave: 2 }, { name: 'F#', octave: 2 }, { name: 'G', octave: 2 },
             { name: 'G#', octave: 2 }, { name: 'A', octave: 2 }, { name: 'A#', octave: 2 },
             { name: 'B', octave: 2 },
@@ -296,13 +296,15 @@ const NOTE_RANGES = {
 };
 
 // Guitar fretboard constants
+// Strings ordered from low E (top, thickest) to high e (bottom, thinnest)
+// This matches the standard "looking from above" view of a guitar fretboard
 const GUITAR_STRINGS = [
-    { label: 'e', name: 'E', octave: 4 },
-    { label: 'B', name: 'B', octave: 3 },
-    { label: 'G', name: 'G', octave: 3 },
-    { label: 'D', name: 'D', octave: 3 },
-    { label: 'A', name: 'A', octave: 2 },
     { label: 'E', name: 'E', octave: 2 },
+    { label: 'A', name: 'A', octave: 2 },
+    { label: 'D', name: 'D', octave: 3 },
+    { label: 'G', name: 'G', octave: 3 },
+    { label: 'B', name: 'B', octave: 3 },
+    { label: 'e', name: 'E', octave: 4 },
 ];
 
 const NOTE_SEMITONES = { 'C': 0, 'C#': 1, 'Db': 1, 'D': 2, 'D#': 3, 'Eb': 3, 'E': 4, 'F': 5, 'F#': 6, 'Gb': 6, 'G': 7, 'G#': 8, 'Ab': 8, 'A': 9, 'A#': 10, 'Bb': 10, 'B': 11 };
@@ -903,6 +905,9 @@ class MusicQuiz {
 
         let startFret = Math.max(0, pos.fret - 2);
         if (startFret + numFrets > 12) startFret = Math.max(0, 12 - numFrets);
+        
+        // Always show the nut (fret 0) if the note is within the first 6 frets
+        if (pos.fret < 6) startFret = 0;
 
         const svgWidth = 250;
         const svgHeight = 148;
@@ -944,12 +949,12 @@ class MusicQuiz {
         // String lines
         for (let s = 0; s < 6; s++) {
             const y = stringYs[s];
-            const thickness = 1.2 + (5 - s) * 0.15;
+            const thickness = 1.2 + s * 0.15;
             svg += `<line x1="${leftX}" y1="${y}" x2="${rightX}" y2="${y}" stroke="#cbd5e1" stroke-width="${thickness}" stroke-opacity="0.5"/>`;
         }
 
-        // String labels
-        const labels = ['e', 'B', 'G', 'D', 'A', 'E'];
+        // String labels - now ordered from low E (top) to high e (bottom)
+        const labels = ['E', 'A', 'D', 'G', 'B', 'e'];
         for (let s = 0; s < 6; s++) {
             svg += `<text x="${marginLeft - 10}" y="${stringYs[s] + 4}" text-anchor="end" fill="#94a3b8" font-size="11" font-weight="700" font-family="Outfit, sans-serif">${labels[s]}</text>`;
         }
@@ -962,10 +967,22 @@ class MusicQuiz {
         }
 
         // Note marker (highlighted dot)
-        const noteX = leftX + (pos.fret - startFret) * fretWidth + fretWidth / 2;
+        let noteX;
+        if (pos.fret === 0 && startFret === 0) {
+            // Open string: place marker at the nut (left edge)
+            noteX = leftX;
+        } else {
+            // Fretted note: place marker between the fret lines
+            noteX = leftX + (pos.fret - startFret - 1) * fretWidth + fretWidth / 2;
+        }
         const noteY = stringYs[pos.stringIndex];
         svg += `<circle cx="${noteX}" cy="${noteY}" r="7" fill="#38bdf8" stroke="#38bdf8" stroke-width="1.5" opacity="0.9"/>`;
         svg += `<circle cx="${noteX}" cy="${noteY}" r="3" fill="#ffffff" opacity="0.6"/>`;
+
+        // Fret number badge next to the note marker
+        if (pos.fret > 0) {
+            svg += `<text x="${noteX + 11}" y="${noteY + 1}" text-anchor="start" fill="#38bdf8" font-size="8" font-weight="700" font-family="Outfit, sans-serif" opacity="0.85">fret ${pos.fret}</text>`;
+        }
 
         svg += '</svg>';
 
