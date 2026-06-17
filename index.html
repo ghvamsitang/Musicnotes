@@ -19,9 +19,7 @@
             </div>
             <div class="header-right">
                 <div class="user-selector">
-                    <button class="user-btn active" data-user="V">V</button>
-                    <button class="user-btn" data-user="I">I</button>
-                    <button class="user-btn" data-user="J">J</button>
+                    <input type="text" id="user-input" class="user-input" placeholder="Initials" maxlength="3" autocomplete="off">
                 </div>
             </div>
         </header>
@@ -92,6 +90,11 @@
                         <button class="note-btn" data-note="A">A</button>
                         <button class="note-btn" data-note="B">B</button>
                     </div>
+                    <div class="accidental-selector">
+                        <button class="accidental-btn" data-accidental="#">♯</button>
+                        <button class="accidental-btn active" data-accidental="">♮</button>
+                        <button class="accidental-btn" data-accidental="b">♭</button>
+                    </div>
                     <div class="keyboard-help">
                         <span>Press keys <strong>A - G</strong> on keyboard to play</span>
                     </div>
@@ -110,6 +113,7 @@
                                 <button class="seg-btn active" data-val="treble">Treble</button>
                                 <button class="seg-btn" data-val="bass">Bass</button>
                                 <button class="seg-btn" data-val="mixed">Mixed</button>
+                                <button class="seg-btn" data-val="guitar">Guitar</button>
                             </div>
                         </div>
                         <div class="setting-item">

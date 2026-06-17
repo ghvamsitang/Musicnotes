@@ -145,6 +145,15 @@ const NOTE_RANGES = {
             { name: 'F', octave: 3 },
             { name: 'G', octave: 3 },
             { name: 'A', octave: 3 }
+        ],
+        guitar: [
+            { name: 'E', octave: 2 }, { name: 'F', octave: 2 }, { name: 'G', octave: 2 },
+            { name: 'A', octave: 2 }, { name: 'B', octave: 2 },
+            { name: 'C', octave: 3 }, { name: 'D', octave: 3 }, { name: 'E', octave: 3 },
+            { name: 'F', octave: 3 }, { name: 'G', octave: 3 }, { name: 'A', octave: 3 },
+            { name: 'B', octave: 3 },
+            { name: 'C', octave: 4 }, { name: 'D', octave: 4 }, { name: 'E', octave: 4 },
+            { name: 'F', octave: 4 }, { name: 'G', octave: 4 }, { name: 'A', octave: 4 },
         ]
     },
     medium: {
@@ -185,6 +194,20 @@ const NOTE_RANGES = {
             { name: 'A', octave: 3 },
             { name: 'B', octave: 3 },
             { name: 'C', octave: 4 }
+        ],
+        guitar: [
+            { name: 'E', octave: 2 }, { name: 'F', octave: 2 }, { name: 'F#', octave: 2 },
+            { name: 'G', octave: 2 }, { name: 'G#', octave: 2 },
+            { name: 'A', octave: 2 }, { name: 'A#', octave: 2 }, { name: 'B', octave: 2 },
+            { name: 'C', octave: 3 }, { name: 'C#', octave: 3 }, { name: 'D', octave: 3 },
+            { name: 'D#', octave: 3 }, { name: 'E', octave: 3 }, { name: 'F', octave: 3 },
+            { name: 'F#', octave: 3 }, { name: 'G', octave: 3 }, { name: 'G#', octave: 3 },
+            { name: 'A', octave: 3 }, { name: 'A#', octave: 3 }, { name: 'B', octave: 3 },
+            { name: 'C', octave: 4 }, { name: 'C#', octave: 4 }, { name: 'D', octave: 4 },
+            { name: 'D#', octave: 4 }, { name: 'E', octave: 4 }, { name: 'F', octave: 4 },
+            { name: 'F#', octave: 4 }, { name: 'G', octave: 4 }, { name: 'G#', octave: 4 },
+            { name: 'A', octave: 4 }, { name: 'A#', octave: 4 }, { name: 'B', octave: 4 },
+            { name: 'C', octave: 5 },
         ]
     },
     hard: {
@@ -252,9 +275,57 @@ const NOTE_RANGES = {
             { name: 'E', octave: 4 },
             { name: 'F', octave: 4 },
             { name: 'G', octave: 4 }
+        ],
+        guitar: [
+            { name: 'D', octave: 2 }, { name: 'D#', octave: 2 }, { name: 'E', octave: 2 },
+            { name: 'F', octave: 2 }, { name: 'F#', octave: 2 }, { name: 'G', octave: 2 },
+            { name: 'G#', octave: 2 }, { name: 'A', octave: 2 }, { name: 'A#', octave: 2 },
+            { name: 'B', octave: 2 },
+            { name: 'C', octave: 3 }, { name: 'C#', octave: 3 }, { name: 'D', octave: 3 },
+            { name: 'D#', octave: 3 }, { name: 'E', octave: 3 }, { name: 'F', octave: 3 },
+            { name: 'F#', octave: 3 }, { name: 'G', octave: 3 }, { name: 'G#', octave: 3 },
+            { name: 'A', octave: 3 }, { name: 'A#', octave: 3 }, { name: 'B', octave: 3 },
+            { name: 'C', octave: 4 }, { name: 'C#', octave: 4 }, { name: 'D', octave: 4 },
+            { name: 'D#', octave: 4 }, { name: 'E', octave: 4 }, { name: 'F', octave: 4 },
+            { name: 'F#', octave: 4 }, { name: 'G', octave: 4 }, { name: 'G#', octave: 4 },
+            { name: 'A', octave: 4 }, { name: 'A#', octave: 4 }, { name: 'B', octave: 4 },
+            { name: 'C', octave: 5 }, { name: 'C#', octave: 5 }, { name: 'D', octave: 5 },
+            { name: 'D#', octave: 5 }, { name: 'E', octave: 5 },
         ]
     }
 };
+
+// Guitar fretboard constants
+const GUITAR_STRINGS = [
+    { label: 'e', name: 'E', octave: 4 },
+    { label: 'B', name: 'B', octave: 3 },
+    { label: 'G', name: 'G', octave: 3 },
+    { label: 'D', name: 'D', octave: 3 },
+    { label: 'A', name: 'A', octave: 2 },
+    { label: 'E', name: 'E', octave: 2 },
+];
+
+const NOTE_SEMITONES = { 'C': 0, 'C#': 1, 'Db': 1, 'D': 2, 'D#': 3, 'Eb': 3, 'E': 4, 'F': 5, 'F#': 6, 'Gb': 6, 'G': 7, 'G#': 8, 'Ab': 8, 'A': 9, 'A#': 10, 'Bb': 10, 'B': 11 };
+
+function noteToMidi(name, octave) {
+    return NOTE_SEMITONES[name] + (octave + 1) * 12;
+}
+
+function findFretPosition(noteName, octave) {
+    const targetMidi = noteToMidi(noteName, octave);
+    let best = null;
+    for (let s = 0; s < GUITAR_STRINGS.length; s++) {
+        const str = GUITAR_STRINGS[s];
+        const openMidi = noteToMidi(str.name, str.octave);
+        const fret = targetMidi - openMidi;
+        if (fret >= 0 && fret <= 12) {
+            if (!best || fret < best.fret) {
+                best = { stringIndex: s, fret, label: str.label };
+            }
+        }
+    }
+    return best;
+}
 
 class MusicQuiz {
     constructor() {
@@ -290,22 +361,33 @@ class MusicQuiz {
         this.resetBtn = document.getElementById('reset-game');
         
         this.noteButtons = document.querySelectorAll('.note-btn');
-        this.userButtons = document.querySelectorAll('.user-btn');
-
-        // State variables
-        this.currentUser = 'V';
-        this.userScores = this.loadScores();
+        this.accidentalButtons = document.querySelectorAll('.accidental-btn');
+        this.userInput = document.getElementById('user-input');
+        this.selectedAccidental = '';
 
         // Audio synth setup
         this.synth = new AudioSynth();
 
-        // Settings (restored from active user profile)
-        const profile = this.userScores[this.currentUser];
-        this.clef = profile.clef || 'treble';
-        this.difficulty = profile.difficulty || 'easy';
-        this.mode = profile.mode || 'practice';
-        this.timeLimit = profile.timeLimit || 60;
-        this.audioEnabled = profile.audioEnabled !== undefined ? profile.audioEnabled : true;
+        // Load scores and restore last active user
+        this.userScores = this.loadScores();
+        this.currentUser = localStorage.getItem('noteHeroLastUser') || '';
+
+        if (this.currentUser && this.userScores[this.currentUser]) {
+            const profile = this.userScores[this.currentUser];
+            this.clef = profile.clef || 'treble';
+            this.difficulty = profile.difficulty || 'easy';
+            this.mode = profile.mode || 'practice';
+            this.timeLimit = profile.timeLimit || 60;
+            this.audioEnabled = profile.audioEnabled !== undefined ? profile.audioEnabled : true;
+            this.userInput.value = this.currentUser;
+        } else {
+            this.clef = 'treble';
+            this.difficulty = 'easy';
+            this.mode = 'practice';
+            this.timeLimit = 60;
+            this.audioEnabled = true;
+            this.currentUser = '';
+        }
         this.synth.enabled = this.audioEnabled;
 
         this.score = 0;
@@ -349,7 +431,15 @@ class MusicQuiz {
     setupEventListeners() {
         // Note button clicks
         this.noteButtons.forEach(btn => {
-            btn.addEventListener('click', () => this.handleAnswer(btn.dataset.note, btn));
+            btn.addEventListener('click', () => this.handleAnswer(btn.dataset.note + this.selectedAccidental, btn));
+        });
+
+        // Accidental selector
+        this.accidentalButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                this.selectedAccidental = btn.dataset.accidental;
+                this.accidentalButtons.forEach(b => b.classList.toggle('active', b.dataset.accidental === this.selectedAccidental));
+            });
         });
 
         // Clef selector segmented control
@@ -440,23 +530,27 @@ class MusicQuiz {
             this.startGame();
         });
 
-        // User switcher buttons
-        this.userButtons.forEach(btn => {
-            btn.addEventListener('click', () => this.switchUser(btn.dataset.user));
+        // User initials input
+        this.userInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                this.setUser(this.userInput.value);
+            }
+        });
+        this.userInput.addEventListener('blur', () => {
+            if (this.userInput.value.trim().toUpperCase() !== this.currentUser) {
+                this.setUser(this.userInput.value);
+            }
         });
 
         // Reset stats button
         this.resetBtn.addEventListener('click', () => {
+            if (!this.currentUser) return;
             if (confirm("Are you sure you want to reset all stats for the current user?")) {
-                this.userScores[this.currentUser] = {
-                    highScore: 0,
-                    totalAnswers: 0,
-                    correctAnswers: 0,
-                    clef: this.clef,
-                    difficulty: this.difficulty,
-                    mode: this.mode,
-                    audioEnabled: this.audioEnabled
-                };
+                this.userScores[this.currentUser] = this.defaultProfile();
+                this.userScores[this.currentUser].clef = this.clef;
+                this.userScores[this.currentUser].difficulty = this.difficulty;
+                this.userScores[this.currentUser].mode = this.mode;
+                this.userScores[this.currentUser].audioEnabled = this.audioEnabled;
                 this.saveScores();
                 this.score = 0;
                 this.streak = 0;
@@ -474,7 +568,7 @@ class MusicQuiz {
             if (['A', 'B', 'C', 'D', 'E', 'F', 'G'].includes(key)) {
                 const btn = Array.from(this.noteButtons).find(b => b.dataset.note === key);
                 if (btn) {
-                    this.handleAnswer(key, btn);
+                    this.handleAnswer(key + this.selectedAccidental, btn);
                 }
             }
         });
@@ -482,15 +576,14 @@ class MusicQuiz {
 
     loadScores() {
         const saved = localStorage.getItem('noteHeroScores_v2');
-        if (saved) return JSON.parse(saved);
-        return {
-            'V': { highScore: 0, totalAnswers: 0, correctAnswers: 0, clef: 'treble', difficulty: 'easy', mode: 'practice', timeLimit: 60, audioEnabled: true },
-            'I': { highScore: 0, totalAnswers: 0, correctAnswers: 0, clef: 'treble', difficulty: 'easy', mode: 'practice', timeLimit: 60, audioEnabled: true },
-            'J': { highScore: 0, totalAnswers: 0, correctAnswers: 0, clef: 'treble', difficulty: 'easy', mode: 'practice', timeLimit: 60, audioEnabled: true }
-        };
+        return saved ? JSON.parse(saved) : {};
     }
 
     saveScores() {
+        if (!this.currentUser) return;
+        if (!this.userScores[this.currentUser]) {
+            this.userScores[this.currentUser] = this.defaultProfile();
+        }
         this.userScores[this.currentUser].clef = this.clef;
         this.userScores[this.currentUser].difficulty = this.difficulty;
         this.userScores[this.currentUser].mode = this.mode;
@@ -499,12 +592,24 @@ class MusicQuiz {
         localStorage.setItem('noteHeroScores_v2', JSON.stringify(this.userScores));
     }
 
-    switchUser(userId) {
+    defaultProfile() {
+        return { highScore: 0, totalAnswers: 0, correctAnswers: 0, clef: 'treble', difficulty: 'easy', mode: 'practice', timeLimit: 60, audioEnabled: true };
+    }
+
+    setUser(input) {
+        const initials = input.trim().toUpperCase();
+        if (!initials) return;
+
         this.saveScores();
 
-        this.currentUser = userId;
-        const profile = this.userScores[userId];
+        this.currentUser = initials;
+        localStorage.setItem('noteHeroLastUser', this.currentUser);
 
+        if (!this.userScores[this.currentUser]) {
+            this.userScores[this.currentUser] = this.defaultProfile();
+        }
+
+        const profile = this.userScores[this.currentUser];
         this.clef = profile.clef || 'treble';
         this.difficulty = profile.difficulty || 'easy';
         this.mode = profile.mode || 'practice';
@@ -518,10 +623,7 @@ class MusicQuiz {
         this.sessionCorrect = 0;
         this.sessionTotal = 0;
 
-        this.userButtons.forEach(btn => {
-            btn.classList.toggle('active', btn.dataset.user === userId);
-        });
-        
+        this.userInput.value = this.currentUser;
         this.updateSettingsUI();
         this.updateStatsUI();
         this.showStartScreen();
@@ -566,18 +668,24 @@ class MusicQuiz {
     }
 
     updateStatsUI() {
-        const profile = this.userScores[this.currentUser];
+        const profile = this.currentUser ? this.userScores[this.currentUser] : null;
         
         this.scoreElement.textContent = this.score;
         this.streakElement.textContent = this.streak;
-        this.statHighscore.textContent = profile.highScore || 0;
-        this.statTotal.textContent = profile.totalAnswers || 0;
 
-        let accuracy = '0%';
-        if (profile.totalAnswers > 0) {
-            accuracy = `${Math.round((profile.correctAnswers / profile.totalAnswers) * 100)}%`;
+        if (profile) {
+            this.statHighscore.textContent = profile.highScore || 0;
+            this.statTotal.textContent = profile.totalAnswers || 0;
+            let accuracy = '0%';
+            if (profile.totalAnswers > 0) {
+                accuracy = `${Math.round((profile.correctAnswers / profile.totalAnswers) * 100)}%`;
+            }
+            this.statAccuracy.textContent = accuracy;
+        } else {
+            this.statHighscore.textContent = '0';
+            this.statTotal.textContent = '0';
+            this.statAccuracy.textContent = '0%';
         }
-        this.statAccuracy.textContent = accuracy;
     }
 
     showStartScreen() {
@@ -664,13 +772,15 @@ class MusicQuiz {
     endGame() {
         this.endGameLoop();
         
-        const profile = this.userScores[this.currentUser];
         let isNewHigh = false;
-        if (this.score > (profile.highScore || 0)) {
-            profile.highScore = this.score;
-            isNewHigh = true;
+        if (this.currentUser) {
+            const profile = this.userScores[this.currentUser];
+            if (this.score > (profile.highScore || 0)) {
+                profile.highScore = this.score;
+                isNewHigh = true;
+            }
+            this.saveScores();
         }
-        this.saveScores();
         this.updateStatsUI();
         
         this.synth.playSuccess();
@@ -700,6 +810,8 @@ class MusicQuiz {
         this.feedbackElement.className = 'feedback-text visible';
         this.feedbackElement.textContent = 'Identify the note...';
         this.noteButtons.forEach(btn => btn.className = 'note-btn');
+        this.selectedAccidental = '';
+        this.accidentalButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.accidental === ''));
         
         // Pick the active clef
         if (this.clef === 'mixed') {
@@ -725,6 +837,10 @@ class MusicQuiz {
     }
 
     renderStaff() {
+        if (this.activeQuestionClef === 'guitar') {
+            this.renderFretboard();
+            return;
+        }
         if (!VF) return;
         this.container.innerHTML = '';
         
@@ -770,18 +886,109 @@ class MusicQuiz {
         }
     }
 
+    renderFretboard() {
+        this.container.innerHTML = '';
+
+        const pos = findFretPosition(this.currentNote.name, this.currentNote.octave);
+        if (!pos) {
+            this.container.innerHTML = `<div class="staff-placeholder" style="color:var(--text-muted);font-weight:600;">Note out of range</div>`;
+            return;
+        }
+
+        const fretWidth = 32;
+        const stringGap = 16;
+        const marginLeft = 50;
+        const marginTop = 18;
+        const numFrets = 6;
+
+        let startFret = Math.max(0, pos.fret - 2);
+        if (startFret + numFrets > 12) startFret = Math.max(0, 12 - numFrets);
+
+        const svgWidth = 250;
+        const svgHeight = 148;
+
+        const stringYs = [];
+        for (let s = 0; s < 6; s++) {
+            stringYs.push(marginTop + s * stringGap);
+        }
+        const bottomY = stringYs[5] + 3;
+        const leftX = marginLeft;
+        const rightX = leftX + numFrets * fretWidth;
+
+        let svg = `<svg width="${svgWidth}" height="${svgHeight}" viewBox="0 0 ${svgWidth} ${svgHeight}" xmlns="http://www.w3.org/2000/svg">`;
+
+        // Fret lines
+        for (let f = 0; f <= numFrets; f++) {
+            const x = leftX + f * fretWidth;
+            const isNut = (startFret + f === 0);
+            const width = isNut ? 3 : 1;
+            const opacity = isNut ? 0.9 : 0.35;
+            svg += `<line x1="${x}" y1="${stringYs[0] - 4}" x2="${x}" y2="${bottomY}" stroke="#94a3b8" stroke-width="${width}" stroke-opacity="${opacity}"/>`;
+        }
+
+        // Fret markers (dots on 3, 5, 7, 9, 12)
+        for (let f = 0; f < numFrets; f++) {
+            const fretNum = startFret + f + 1;
+            if ([3, 5, 7, 9].includes(fretNum)) {
+                const cx = leftX + f * fretWidth + fretWidth / 2;
+                const cy = (stringYs[0] + stringYs[5]) / 2;
+                svg += `<circle cx="${cx}" cy="${cy}" r="3" fill="#475569" opacity="0.4"/>`;
+            } else if (fretNum === 12) {
+                const cx = leftX + f * fretWidth + fretWidth / 2;
+                const gap = stringYs[2] - stringYs[1];
+                svg += `<circle cx="${cx}" cy="${(stringYs[1] + stringYs[2]) / 2}" r="3" fill="#475569" opacity="0.4"/>`;
+                svg += `<circle cx="${cx}" cy="${(stringYs[3] + stringYs[4]) / 2}" r="3" fill="#475569" opacity="0.4"/>`;
+            }
+        }
+
+        // String lines
+        for (let s = 0; s < 6; s++) {
+            const y = stringYs[s];
+            const thickness = 1.2 + (5 - s) * 0.15;
+            svg += `<line x1="${leftX}" y1="${y}" x2="${rightX}" y2="${y}" stroke="#cbd5e1" stroke-width="${thickness}" stroke-opacity="0.5"/>`;
+        }
+
+        // String labels
+        const labels = ['e', 'B', 'G', 'D', 'A', 'E'];
+        for (let s = 0; s < 6; s++) {
+            svg += `<text x="${marginLeft - 10}" y="${stringYs[s] + 4}" text-anchor="end" fill="#94a3b8" font-size="11" font-weight="700" font-family="Outfit, sans-serif">${labels[s]}</text>`;
+        }
+
+        // Fret numbers
+        for (let f = 0; f < numFrets; f++) {
+            const fretNum = startFret + f + 1;
+            const x = leftX + f * fretWidth + fretWidth / 2;
+            svg += `<text x="${x}" y="${bottomY + 14}" text-anchor="middle" fill="#64748b" font-size="9" font-weight="600" font-family="Outfit, sans-serif">${fretNum}</text>`;
+        }
+
+        // Note marker (highlighted dot)
+        const noteX = leftX + (pos.fret - startFret) * fretWidth + fretWidth / 2;
+        const noteY = stringYs[pos.stringIndex];
+        svg += `<circle cx="${noteX}" cy="${noteY}" r="7" fill="#38bdf8" stroke="#38bdf8" stroke-width="1.5" opacity="0.9"/>`;
+        svg += `<circle cx="${noteX}" cy="${noteY}" r="3" fill="#ffffff" opacity="0.6"/>`;
+
+        svg += '</svg>';
+
+        this.container.innerHTML = svg;
+
+        const svgEl = this.container.querySelector('svg');
+        if (svgEl) {
+            svgEl.style.filter = 'drop-shadow(0 0 6px rgba(56, 189, 248, 0.3))';
+        }
+    }
+
     handleAnswer(selectedNote, btnElement) {
         if (!this.canAnswer || !this.gameActive) return;
         this.canAnswer = false;
 
-        const isCorrect = selectedNote === this.currentNote.name[0];
+        const isCorrect = selectedNote === this.currentNote.name;
         
         this.sessionTotal++;
-        this.userScores[this.currentUser].totalAnswers++;
+        if (this.currentUser) this.userScores[this.currentUser].totalAnswers++;
 
         if (isCorrect) {
             this.sessionCorrect++;
-            this.userScores[this.currentUser].correctAnswers++;
+            if (this.currentUser) this.userScores[this.currentUser].correctAnswers++;
 
             if (this.mode === 'timeattack') {
                 this.score += 10;
